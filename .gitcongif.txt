@@ -1,0 +1,6 @@
+[alias]
+tree = log --graph --oneline --all --pretty=format:'%C(yellow)%h%Creset -%Cred%d%Creset %s 
+%Cgreen%cr%Creset %Cblue%an%Creset %gn'
+[user]
+name = Kamel BOUHADOUN
+email = kamel.bouhadoun@lecnam.net
