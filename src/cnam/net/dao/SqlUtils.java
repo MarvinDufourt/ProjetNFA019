@@ -19,7 +19,12 @@ public class SqlUtils {
 		return preparedStatement;
 	}
 
-
+	/**
+	 * 
+	 * @param resultSet Accès à la base de données
+	 * @return les données de la table utilisateur
+	 * @throws SQLException erreur accès bdd
+	 */
 	public static Utilisateur mapUtilisateur(ResultSet resultSet) throws SQLException {
 		Utilisateur utilisateur = new Utilisateur();
 		utilisateur.setId(resultSet.getLong("id"));
@@ -32,7 +37,12 @@ public class SqlUtils {
 
 		return utilisateur;
 	}
-
+	/**
+	 * 
+	 * @param resultSet Accès à la base de données
+	 * @return les données de la table frigo
+	 * @throws SQLException erreur accès bdd
+	 */
 	public static Frigo mapFrigo(ResultSet resultSet) throws SQLException {
 		Frigo frigo = new Frigo();
 		frigo.setId(resultSet.getLong("id"));
@@ -43,7 +53,12 @@ public class SqlUtils {
 		frigo.setDateDernierePriseTemp(resultSet.getTimestamp("dateDernierePriseTemp"));
 		return frigo;
 	}
-
+	/**
+	 * 
+	 * @param resultSet Accès à la base de données
+	 * @return les données de la table produit
+	 * @throws SQLException erreur accès bdd
+	 */
 	public static Produit mapProduit(ResultSet resultSet) throws SQLException {
 		Produit produit = new Produit();
 		produit.setId(resultSet.getLong("id"));
@@ -55,7 +70,12 @@ public class SqlUtils {
 		produit.setDateHeureEntree(resultSet.getTimestamp("dateEntreeProduit"));
 		return produit;
 	}
-	
+	/**
+	 * 
+	 * @param resultSet Accès à la base de données
+	 * @return les données de la table produitreference
+	 * @throws SQLException erreur accès bdd
+	 */
 	public static ProduitReference mapProduitReference(ResultSet resultSet) throws SQLException {
 		ProduitReference produitReference = new ProduitReference();
 		produitReference.setId(resultSet.getLong("id"));
@@ -64,7 +84,12 @@ public class SqlUtils {
 		produitReference.setDlcHeure(resultSet.getLong("dlcHeure"));
 		return produitReference;
 	}
-	
+	/**
+	 * 
+	 * @param resultSet Accès à la base de données
+	 * @return les données de la table historique
+	 * @throws SQLException erreur accès bdd
+	 */
 	public static Historique mapHistorique(ResultSet resultSet) throws SQLException {
 		Historique historique = new Historique();
 		historique.setUtilisateur(resultSet.getString("utilisateur"));

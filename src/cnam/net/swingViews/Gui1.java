@@ -160,10 +160,11 @@ public class Gui1 extends JFrame {
 	private DefaultTableCellRenderer rendererFrigo = new TableCellRendererFrigo();
 	private JTable table_Historique;
 
-	/**
-	 * Create the frame.
-	 */
+	
 	public Gui1() {
+		//////////////////////////
+		/// Création de la JFrame
+		//////////////////////////
 		setResizable(false);
 		setTitle("Projet NFA019 Marvin Dufourt");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -1004,9 +1005,11 @@ public class Gui1 extends JFrame {
 
 		Historique historique = new Historique();
 
-		//////////////////////////
-		//// Initialisation tables
 		///////////////////////////
+		//// Configuration JTables
+		///////////////////////////
+		
+		/// Création des colonnes
 		modelUtilisateur.addColumn("Id");
 		modelUtilisateur.addColumn("Prenom");
 		modelUtilisateur.addColumn("Nom");
@@ -1037,6 +1040,7 @@ public class Gui1 extends JFrame {
 		modelHistorique.addColumn("Action");
 		modelHistorique.addColumn("Date");
 
+		/// Configuration de la taille des cellules pour une meilleur lisibilité
 		table_Produit_Admin.getColumnModel().getColumn(0).setMaxWidth(40);
 		table_Produit_Admin.getColumnModel().getColumn(3).setMaxWidth(100);
 		table_User_Admin.getColumnModel().getColumn(0).setMaxWidth(40);
@@ -1046,6 +1050,7 @@ public class Gui1 extends JFrame {
 		table_Historique.getColumnModel().getColumn(2).setMaxWidth(200);
 		table_Historique.getColumnModel().getColumn(2).setMinWidth(120);
 
+		/// Remplissage de la table
 		refreshTableUtilisateur(modelUtilisateur);
 		refreshTableFrigo(modelFrigo);
 		refreshTableProduit(modelProduit);
@@ -1056,6 +1061,7 @@ public class Gui1 extends JFrame {
 		////Events Section
 		////////////////////
 
+		///Action des boutons refresh
 		btnRefreshUsers.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				refreshTableUtilisateur(modelUtilisateur);
@@ -1094,6 +1100,8 @@ public class Gui1 extends JFrame {
 			}
 		});
 
+		
+		/// Action des boutons delete
 		btnDeleteUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -1174,6 +1182,7 @@ public class Gui1 extends JFrame {
 			}
 		});
 
+		/// Action des boutons Ajout/insert
 		btnAddNewUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				DAOFactory daoFactory = DAOFactory.getInstance();
@@ -1242,40 +1251,7 @@ public class Gui1 extends JFrame {
 			}
 		});
 
-		btn_Admin_ValiderProduit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				DAOFactory daoFactory = DAOFactory.getInstance();
-				ProduitDao produitDaoImpl = daoFactory.getProduitDaoImpl();
-				Produit produit = new Produit();
-				produit.setNom(String.valueOf(table_AddProduit_Ref.getValueAt(table_AddProduit_Ref.getSelectedRow(), 1)));
-				produit.setCategorie(String.valueOf(table_AddProduit_Ref.getValueAt(table_AddProduit_Ref.getSelectedRow(), 2)));
-				produit.setIdFrigoAssocier(Long.parseLong(String.valueOf(table_AddProduit_Frigo.getValueAt(table_AddProduit_Frigo.getSelectedRow(), 0))));
-				produit.setStatut("Ok");
-
-				Calendar dateActuelle = Calendar.getInstance();
-				String formatedDateActuelle = dateActuelle.get(Calendar.YEAR)+ "-" + (dateActuelle.get(Calendar.MONTH)+1) + "-" + dateActuelle.get(Calendar.DAY_OF_MONTH) + " " + dateActuelle.get(Calendar.HOUR_OF_DAY) + ":" + dateActuelle.get(Calendar.MINUTE) + ":" + dateActuelle.get(Calendar.SECOND);
-				Timestamp TsDateActuelle = Timestamp.valueOf(formatedDateActuelle);
-				produit.setDateHeureEntree(TsDateActuelle);
-
-				Timestamp TsDateDlc = Timestamp.valueOf(formatedDateActuelle);
-				int dlcHeure = Integer.parseInt(String.valueOf(table_AddProduit_Ref.getValueAt(table_AddProduit_Ref.getSelectedRow(), 3)));
-				TsDateDlc.setTime(TsDateDlc.getTime()+(dlcHeure*3600000));
-				produit.setDlc(TsDateDlc);
-
-				btn_Changer_Statut.setEnabled(false);
-				btn_Admin_ModifierProduit.setEnabled(false);
-				btn_Admin_SupprimerProduit.setEnabled(false);
-				produitDaoImpl.save(produit);
-				HistoriqueDaoImpl historiqueDaoImpl = new HistoriqueDaoImpl(daoFactory);
-				historiqueDaoImpl.save(historique, "Ajout produit "+produit.getNom()+"    Id : "+produit.getId()+"    Frigo : "+produit.getIdFrigoAssocier());
-				refreshTableProduit(modelProduit);
-				layeredPane.removeAll();
-				layeredPane.add(panel_Admin_Gestion_Produits);
-				layeredPane.repaint();
-				layeredPane.revalidate();
-			}
-		});
-
+		/// Bouton connexion
 		btnConnect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) throws ConnexionException {
 				try {
@@ -1327,7 +1303,7 @@ public class Gui1 extends JFrame {
 		});
 
 
-
+		/// Action des boutons modifier
 		btnModifyUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -1424,6 +1400,68 @@ public class Gui1 extends JFrame {
 				layeredPane.revalidate();
 
 
+			}
+		});
+		
+		btn_Admin_ModifierProduit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DAOFactory daoFactory = DAOFactory.getInstance();
+				ProduitDao produitDaoImpl = daoFactory.getProduitDaoImpl();
+				Produit produit = produitDaoImpl.get(Long.parseLong(String.valueOf(table_Produit_Admin.getValueAt(table_Produit_Admin.getSelectedRow(), 0))));
+
+				txtAdmin_ModifierProduit_DateEntree.setText(String.valueOf(table_Produit_Admin.getValueAt(table_Produit_Admin.getSelectedRow(), 5)));
+				txtAdmin_ModifierProduit_DLC.setText(String.valueOf(table_Produit_Admin.getValueAt(table_Produit_Admin.getSelectedRow(), 6)));
+
+
+				int rowLocation=-1;
+
+				for (int i=0; i<table_Modifier_Produit.getRowCount(); i++) {
+					if (Long.parseLong(String.valueOf(table_Modifier_Produit.getValueAt(i, 0)))==produit.getIdFrigoAssocier()) {
+						rowLocation = i;
+					}
+				}
+				table_Modifier_Produit.setRowSelectionInterval(rowLocation, rowLocation);
+
+
+				layeredPane.removeAll();
+				layeredPane.add(panel_Admin_Modifier_Produits);
+				layeredPane.repaint();
+				layeredPane.revalidate();
+			}
+		});
+		
+		/// Actions des boutons valider modifications
+		btn_Admin_ValiderProduit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DAOFactory daoFactory = DAOFactory.getInstance();
+				ProduitDao produitDaoImpl = daoFactory.getProduitDaoImpl();
+				Produit produit = new Produit();
+				produit.setNom(String.valueOf(table_AddProduit_Ref.getValueAt(table_AddProduit_Ref.getSelectedRow(), 1)));
+				produit.setCategorie(String.valueOf(table_AddProduit_Ref.getValueAt(table_AddProduit_Ref.getSelectedRow(), 2)));
+				produit.setIdFrigoAssocier(Long.parseLong(String.valueOf(table_AddProduit_Frigo.getValueAt(table_AddProduit_Frigo.getSelectedRow(), 0))));
+				produit.setStatut("Ok");
+
+				Calendar dateActuelle = Calendar.getInstance();
+				String formatedDateActuelle = dateActuelle.get(Calendar.YEAR)+ "-" + (dateActuelle.get(Calendar.MONTH)+1) + "-" + dateActuelle.get(Calendar.DAY_OF_MONTH) + " " + dateActuelle.get(Calendar.HOUR_OF_DAY) + ":" + dateActuelle.get(Calendar.MINUTE) + ":" + dateActuelle.get(Calendar.SECOND);
+				Timestamp TsDateActuelle = Timestamp.valueOf(formatedDateActuelle);
+				produit.setDateHeureEntree(TsDateActuelle);
+
+				Timestamp TsDateDlc = Timestamp.valueOf(formatedDateActuelle);
+				int dlcHeure = Integer.parseInt(String.valueOf(table_AddProduit_Ref.getValueAt(table_AddProduit_Ref.getSelectedRow(), 3)));
+				TsDateDlc.setTime(TsDateDlc.getTime()+(dlcHeure*3600000));
+				produit.setDlc(TsDateDlc);
+
+				btn_Changer_Statut.setEnabled(false);
+				btn_Admin_ModifierProduit.setEnabled(false);
+				btn_Admin_SupprimerProduit.setEnabled(false);
+				produitDaoImpl.save(produit);
+				HistoriqueDaoImpl historiqueDaoImpl = new HistoriqueDaoImpl(daoFactory);
+				historiqueDaoImpl.save(historique, "Ajout produit "+produit.getNom()+"    Id : "+produit.getId()+"    Frigo : "+produit.getIdFrigoAssocier());
+				refreshTableProduit(modelProduit);
+				layeredPane.removeAll();
+				layeredPane.add(panel_Admin_Gestion_Produits);
+				layeredPane.repaint();
+				layeredPane.revalidate();
 			}
 		});
 
@@ -1527,33 +1565,6 @@ public class Gui1 extends JFrame {
 			}
 		});
 
-		btn_Admin_ModifierProduit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				DAOFactory daoFactory = DAOFactory.getInstance();
-				ProduitDao produitDaoImpl = daoFactory.getProduitDaoImpl();
-				Produit produit = produitDaoImpl.get(Long.parseLong(String.valueOf(table_Produit_Admin.getValueAt(table_Produit_Admin.getSelectedRow(), 0))));
-
-				txtAdmin_ModifierProduit_DateEntree.setText(String.valueOf(table_Produit_Admin.getValueAt(table_Produit_Admin.getSelectedRow(), 5)));
-				txtAdmin_ModifierProduit_DLC.setText(String.valueOf(table_Produit_Admin.getValueAt(table_Produit_Admin.getSelectedRow(), 6)));
-
-
-				int rowLocation=-1;
-
-				for (int i=0; i<table_Modifier_Produit.getRowCount(); i++) {
-					if (Long.parseLong(String.valueOf(table_Modifier_Produit.getValueAt(i, 0)))==produit.getIdFrigoAssocier()) {
-						rowLocation = i;
-					}
-				}
-				table_Modifier_Produit.setRowSelectionInterval(rowLocation, rowLocation);
-
-
-				layeredPane.removeAll();
-				layeredPane.add(panel_Admin_Modifier_Produits);
-				layeredPane.repaint();
-				layeredPane.revalidate();
-			}
-		});
-
 		btn_Admin_ValiderModifProduit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				DAOFactory daoFactory = DAOFactory.getInstance();
@@ -1594,7 +1605,8 @@ public class Gui1 extends JFrame {
 
 			}
 		});
-
+		
+		/// Bouton controle de la température des frigos
 		btn_ControlerTemp_Frigo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				DAOFactory daoFactory = DAOFactory.getInstance();
@@ -1633,6 +1645,7 @@ public class Gui1 extends JFrame {
 			}
 		});
 
+		/// Bouton changer le statut du frigo
 		btn_Changer_Statut.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				DAOFactory daoFactory = DAOFactory.getInstance();
@@ -1650,6 +1663,7 @@ public class Gui1 extends JFrame {
 			}
 		});
 
+		/// listeners des JTables pour activer les boutons quand une ligne est sélectionnée à la souris
 		table_AddProduit_Frigo.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {
 				if (table_AddProduit_Frigo.getSelectionModel().isSelectionEmpty()==false) {
@@ -1706,6 +1720,7 @@ public class Gui1 extends JFrame {
 			}
 		});
 
+		/// Action des boutons de changement de page
 		btnCanceltoAdmin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				layeredPane.removeAll();
